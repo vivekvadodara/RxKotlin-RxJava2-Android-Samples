@@ -27,7 +27,8 @@ class DistinctOperatorActivity : AppCompatActivity() {
     private fun executeDistinctOperator() {
 
         getObservable()
-                .distinct()
+//                .distinct()
+                .distinctUntilChanged()
                 .subscribe(getObserver())
     }
 

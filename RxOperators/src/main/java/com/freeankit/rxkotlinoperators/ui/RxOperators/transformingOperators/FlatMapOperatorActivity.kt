@@ -20,7 +20,41 @@ class FlatMapOperatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_example_operator)
 
-        btn.setOnClickListener({ executeFlatMapOperator() })
+        btn.setOnClickListener { executeOperator() }
+    }
+
+    private fun executeOperator() {
+        val s = getObservable()
+                .subscribeOn(Schedulers.io())
+                // Be notified on the main thread
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { integer ->
+                    getStringObservable(integer)
+                }
+                .subscribe(
+                        { value ->
+                            textView.append(" onNext : value : " + value)
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onNext value : " + value)
+                        },
+                        { e ->
+                            textView.append(" onError : " + e.message)
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onError : " + e.message)
+                        },
+                        {
+                            textView.append(" onComplete")
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onComplete")
+                        },
+                        { d ->
+                            Log.d(Constant().TAG, " onSubscribe : " + d.isDisposed)
+                        }
+                )
+    }
+
+    private fun getStringObservable(i: Int): Observable<String> {
+        return Observable.just("A$i", "B$i", "C$i")
     }
 
     /*Transform the items emitted by an Observable into Observables,

@@ -7,18 +7,86 @@ import com.freeankit.rxkotlinoperators.R
 import com.freeankit.rxkotlinoperators.utils.Constant
 import io.reactivex.Observable
 import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_example_operator.*
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Ankit Kumar (ankitdroiddeveloper@gmail.com) on 10/01/2018 (MM/DD/YYYY )
  */
 class MergeOperatorActivity : AppCompatActivity() {
+
+    val disposable = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_example_operator)
 
-        btn.setOnClickListener({ executeMergeOperator() })
+        btn.setOnClickListener { executeMerge() }
+    }
+
+    private fun executeMerge() {
+//TODO ask students to find the root cause
+        disposable.add(Observable.merge(
+                source1(), source2()
+        ).subscribe(
+                { value ->
+                    textView.append(" onNext : value : " + value)
+                    textView.append(Constant().LINE_SEPARATOR)
+                    Log.d(Constant().TAG, " onNext : value : " + value)
+                },
+                {
+
+                },
+                {
+                    textView.append(" onComplete")
+                    textView.append(Constant().LINE_SEPARATOR)
+                    Log.d(Constant().TAG, " onComplete")
+                },
+                {
+
+                }
+
+        ))
+
+    }
+
+    private fun source1(): Observable<Long> {
+
+        return Observable.create { emitter ->
+
+            Observable.intervalRange(1, 10, 0, 1, TimeUnit.SECONDS).subscribe(
+                    {
+                        emitter.onNext(it)
+                    },
+                    {
+
+                    },
+                    {
+                        emitter.onComplete()
+                    }
+            )
+        }
+    }
+
+    private fun source2(): Observable<Long> {
+
+        return Observable.create { emitter ->
+
+            Observable.intervalRange(101, 5, 0, 1, TimeUnit.SECONDS).subscribe(
+                    {
+                        emitter.onNext(it)
+                    },
+                    {
+                    },
+                    {
+                        emitter.onComplete()
+                    }
+            )
+        }
     }
 
     /*
@@ -66,4 +134,10 @@ class MergeOperatorActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
+    }
+
 }

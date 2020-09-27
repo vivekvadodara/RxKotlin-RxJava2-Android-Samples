@@ -37,29 +37,29 @@ class DisposableOperatorActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 // Be notified on the main thread
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableObserver<String>() {
-                    override fun onComplete() {
+                .subscribe(
+                        { value ->
+                            textView.append(" onNext : value : " + value)
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onNext value : " + value)
+                            progress.visibility = View.GONE
+                        },
+                        { e ->
+                            textView.append(" onError : " + e.message)
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onError : " + e.message)
+                            progress.visibility = View.GONE
+                        },
+                        {
+                            textView.append(" onComplete")
+                            textView.append(Constant().LINE_SEPARATOR)
+                            Log.d(Constant().TAG, " onComplete")
+                            progress.visibility = View.GONE
+                        },
+                        {
 
-                        textView.append(" onComplete")
-                        textView.append(Constant().LINE_SEPARATOR)
-                        Log.d(Constant().TAG, " onComplete")
-                        progress.visibility = View.GONE
-                    }
-
-                    override fun onError(e: Throwable) {
-                        textView.append(" onError : " + e.message)
-                        textView.append(Constant().LINE_SEPARATOR)
-                        Log.d(Constant().TAG, " onError : " + e.message)
-                        progress.visibility = View.GONE
-                    }
-
-                    override fun onNext(value: String) {
-                        textView.append(" onNext : value : " + value)
-                        textView.append(Constant().LINE_SEPARATOR)
-                        Log.d(Constant().TAG, " onNext value : " + value)
-                        progress.visibility = View.GONE
-                    }
-                }))
+                        }
+                ))
     }
 
     private fun sampleObservable(): Observable<String> {

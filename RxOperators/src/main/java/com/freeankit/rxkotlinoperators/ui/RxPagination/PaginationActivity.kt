@@ -55,7 +55,6 @@ class PaginationActivity : AppCompatActivity() {
                 }
             }
         })
-
     }
 
     override fun onDestroy() {
@@ -66,17 +65,17 @@ class PaginationActivity : AppCompatActivity() {
     private fun subscribeForData() {
         val disposable = paginator
                 .onBackpressureDrop()
-                .concatMap({ page ->
+                .flatMap { page ->
                     loading = true
                     progressBar.visibility = View.VISIBLE
                     dataFromNetwork(page)
-                })
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ items ->
+                .subscribe { items ->
                     adapter?.addData(items as MutableList<String>)
                     loading = false
                     progressBar.visibility = View.INVISIBLE
-                })
+                }
 
         compositeDisposable.add(disposable)
 
@@ -87,13 +86,13 @@ class PaginationActivity : AppCompatActivity() {
     private fun dataFromNetwork(page: Int): Publisher<ArrayList<String>>? {
         return Flowable.just(true)
                 .delay(2, TimeUnit.SECONDS)
-                .map({
+                .map {
                     val items = ArrayList<String>()
                     for (i in 1..10) {
                         items.add("ListItem " + (page * 10 + i))
                     }
                     items
-                })
+                }
 
     }
 }

@@ -165,7 +165,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="startDistinctActivity"
-            android:text="@string/defer"
+            android:text="distinct"
             android:textColor="@android:color/black" />
 
         <Button

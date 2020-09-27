@@ -31,7 +31,7 @@ class RetryOperatorActivity : AppCompatActivity() {
         getObservable()
                 .retry()
 //                .retryWhen(source -> source.delay(100, TimeUnit.MILLISECONDS))
-                .debounce(500, TimeUnit.MILLISECONDS)
+//                .debounce(500, TimeUnit.MILLISECONDS)
                 // Run on a background thread
                 .subscribeOn(Schedulers.io())
                 // Be notified on the main thread

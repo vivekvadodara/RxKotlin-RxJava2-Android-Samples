@@ -27,6 +27,7 @@ class DeferOperatorActivity : AppCompatActivity() {
    */
     private fun executeDeferOperator() {
         val bike = Bike()
+        bike.setBrand("Bicycle")
 
         val brandDeferObservable = bike.brandDeferObservable()
 
